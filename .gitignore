@@ -1,0 +1,43 @@
+# -------------------------------------------------------------------
+# Terraform
+# -------------------------------------------------------------------
+
+# Local Terraform state
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Sensitive variable files
+*.tfvars
+*.tfvars.json
+!example.tfvars            # Keep example templates
+
+# Ignore local override configs
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Local-only configuration (not meant for version control)
+**/.terraform/
+**/.terraform.lock.hcl
+terraform.rc
+**/.terraform.tfstate.lock.info
+
+# -------------------------------------------------------------------
+# Editor & OS junk
+# -------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+.idea/
+.vscode/
