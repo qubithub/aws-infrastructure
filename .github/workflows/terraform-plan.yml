@@ -11,6 +11,7 @@ permissions:
 jobs: 
   terraform: 
     runs-on: ubuntu-latest
+    environment: staging
     defaults: 
       run: 
         working-directory: infra
