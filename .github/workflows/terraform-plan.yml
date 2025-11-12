@@ -22,7 +22,7 @@ jobs:
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
-          role-to-assume: arn:aws:iam::806985512920:role/Terraform-Runner
+          role-to-assume: arn:aws:iam::${{ variables.AWS_ACCOUNT }}:role/Terraform-Runner
           aws-region: mx-central-1
       
       - name: Set up Terraform
@@ -33,7 +33,7 @@ jobs:
       - name: Terraform Init
         run : |
           terraform init \
-            -backend-config="envs/{{ env.Environment }}.config"
+            -backend-config="envs/${{ env.Environment }}.config"
       
       - name: Terraform Validate
         run: terraform Validate
