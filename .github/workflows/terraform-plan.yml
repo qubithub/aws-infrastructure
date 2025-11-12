@@ -2,7 +2,6 @@ name: Terraform Plan
 
 on: 
   push
-  pull_request
 
 permissions:
   contents: read
