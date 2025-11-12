@@ -1,0 +1,46 @@
+name: Terraform Plan
+
+on: 
+  push
+  pull_request
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs: 
+  terraform: 
+    runs-on: ubuntu-latest
+    defaults: 
+      run: 
+        working-directory: infra
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          role-to-assume: arn:aws:iam::{{ variables.AWS_ACCOUNT_ID }}:role/Terraform-Runner
+          aws-region: mx-central-1
+      
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with: 
+          terraform_version: 1.13.5
+
+      - name: Terraform Init
+        run : |
+          terraform init \
+            -backend-config="envs/{{ env.Environment }}.config"
+      
+      - name: Terraform Validate
+        run: terraform Validate
+      
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+      
+      - name: Show Plan Summary
+        run: terraform show -no-color tfplan
