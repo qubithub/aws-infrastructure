@@ -22,7 +22,7 @@ jobs:
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
-          role-to-assume: arn:aws:iam::{{ variables.AWS_ACCOUNT_ID }}:role/Terraform-Runner
+          role-to-assume: arn:aws:iam::{{ variables.AWS_ACCOUNT }}:role/Terraform-Runner
           aws-region: mx-central-1
       
       - name: Set up Terraform
