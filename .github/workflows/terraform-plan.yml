@@ -1,7 +1,11 @@
 name: Terraform Plan
 
 on: 
-  push
+  pull_request: 
+    branches: 
+      - main
+    types: [opened, synchronize, reopened]
+  
 
 permissions:
   contents: read
@@ -11,7 +15,11 @@ permissions:
 jobs: 
   terraform: 
     runs-on: ubuntu-latest
-    environment: staging
+
+    strategy: 
+      matrix: 
+        environment: [staging, production]
+
     defaults: 
       run: 
         working-directory: infra
@@ -40,7 +48,22 @@ jobs:
         run: terraform validate
       
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan-${{ vars.ENVIRONMENT }}
       
       - name: Show Plan Summary
-        run: terraform show -no-color tfplan
+        run: terraform show -no-color tfplan-${{ vars.ENVIRONMENT }}
+      
+      - name: Upload Plan to PR Comment
+        if: success()
+        uses: actions/github-script@v7
+        with: 
+          script: |
+            const fs = require('fs');
+            const output = await exec.getExecOutput('terraform show -no-color tfplan-${{ vars.ENVIRONMENT }}.bin');
+            const body = `### Terraform plan for \`${{ vars.ENVIRONMENT }}\`\n\`\`\`\n${output.stdout}\n\`\`\``;
+            github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
