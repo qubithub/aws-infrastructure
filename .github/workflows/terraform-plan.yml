@@ -29,7 +29,7 @@ jobs:
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
   
-  plan-staging: 
+  plan-production: 
     name: Terraform Plan Production
     runs-on: ubuntu-latest
     environment: production
