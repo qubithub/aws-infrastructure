@@ -20,9 +20,6 @@ inputs:
 
 runs: 
   using: "composite"
-  defaults: 
-    runs: 
-      working-directory: ${{ inputs.terraform-root }}
   steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,16 +39,17 @@ runs:
         shell: bash
         run : |
           terraform init \
-            -backend-config=${{ inputs.environment-config-file }}
+            -backend-config=${{ inputs.environment-config-file }} \
+            ${{ terraform-root }}
       
       - name: Terraform Validate
         shell: bash
-        run: terraform validate
+        run: terraform validate ${{ terraform-root }}
       
       - name: Terraform Plan
         shell: bash
-        run: terraform plan -out=tfplan-${{ inputs.environment }}
+        run: terraform plan -out=tfplan-${{ inputs.environment }} ${{ terraform-root }}
       
       - name: Show Plan Summary
         shell: bash
-        run: terraform show -no-color tfplan-${{ inputs.environment }}
+        run: terraform show -no-color tfplan-${{ inputs.environment }} ${{ terraform-root }}
