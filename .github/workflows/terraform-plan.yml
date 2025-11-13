@@ -31,7 +31,7 @@ jobs:
           environment: staging
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
-          environment-config-file: ./infra/envs/staging.config
+          environment-config-file: ./envs/staging.config
           terraform-root: ./infra
   
   plan-production: 
@@ -51,5 +51,5 @@ jobs:
           environment: staging
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
-          environment-config-file: ./infra/envs/production.config
+          environment-config-file: ./envs/production.config
           terraform-root: ./infra
