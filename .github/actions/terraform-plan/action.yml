@@ -38,9 +38,11 @@ runs:
       - name: Terraform Init
         shell: bash
         run : |
-          terraform init \
+          terraform \
+            -chdir=${{ inputs.terraform-root }} \
+            init \
             -backend-config=${{ inputs.environment-config-file }} \
-            -chdir=${{ inputs.terraform-root }}
+            
 
       - name: Terraform Validate
         shell: bash
@@ -48,8 +50,8 @@ runs:
       
       - name: Terraform Plan
         shell: bash
-        run: terraform plan -out=tfplan-${{ inputs.environment }} -chdir=${{ inputs.terraform-root }}
+        run: terraform -chdir=${{ inputs.terraform-root }} plan -out=tfplan-${{ inputs.environment }} 
       
       - name: Show Plan Summary
         shell: bash
-        run: terraform show -no-color tfplan-${{ inputs.environment }} -chdir=${{ inputs.terraform-root }}
+        run: terraform -chdir=${{ inputs.terraform-root }} show -no-color tfplan-${{ inputs.environment }}
