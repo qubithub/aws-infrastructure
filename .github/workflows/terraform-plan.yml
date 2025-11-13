@@ -23,7 +23,7 @@ jobs:
         working-directory: infra
     steps: 
       - name: Run Terraform Plan (Staging)
-        uses: ./.github/actions/terraform-plan
+        uses: ./.github/actions/terraform-plan.yml
         with: 
           environment: staging
           aws-region: mx-central-1
@@ -38,7 +38,7 @@ jobs:
         working-directory: infra
     steps: 
       - name: Run Terraform Plan (Production)
-        uses: ./.github/actions/terraform-plan
+        uses: ./.github/actions/terraform-plan.yml
         with: 
           environment: staging
           aws-region: mx-central-1
