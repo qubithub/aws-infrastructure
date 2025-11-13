@@ -1,0 +1,35 @@
+name: Terraform Plan
+
+on: 
+  pull_request: 
+    branches: 
+      - main
+    types: [opened, synchronize, reopened]
+  push:
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs: 
+
+  initialize-and-plan-staging: 
+    name: Terraform Plan Staging
+    runs-on: ubuntu-latest
+    environment: staging
+    defaults: 
+      run: 
+        working-directory: infra
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Terraform Plan (Staging)
+        uses: ./.github/actions/terraform-plan
+        with: 
+          environment: staging
+          aws-region: mx-central-1
+          aws-account: ${{ vars.AWS_ACCOUNT }}
+          environment-config-file: ./envs/staging.config
+          terraform-root: ./infra
