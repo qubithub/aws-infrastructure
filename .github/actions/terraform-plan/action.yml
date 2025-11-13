@@ -35,21 +35,24 @@ runs:
         with: 
           terraform_version: 1.13.5
 
+      - name: Navigate to terraform directory
+        shell: bash
+        run : cd ${{ inputs.terraform-root }}
+
       - name: Terraform Init
         shell: bash
         run : |
           terraform init \
             -backend-config=${{ inputs.environment-config-file }} \
-            ${{ inputs.terraform-root }}
       
       - name: Terraform Validate
         shell: bash
-        run: terraform validate ${{ inputs.terraform-root }}
+        run: terraform validate
       
       - name: Terraform Plan
         shell: bash
-        run: terraform plan -out=tfplan-${{ inputs.environment }} ${{ inputs.terraform-root }}
+        run: terraform plan -out=tfplan-${{ inputs.environment }}
       
       - name: Show Plan Summary
         shell: bash
-        run: terraform show -no-color tfplan-${{ inputs.environment }} ${{ inputs.terraform-root }}
+        run: terraform show -no-color tfplan-${{ inputs.environment }}
