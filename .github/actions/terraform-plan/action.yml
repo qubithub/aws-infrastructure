@@ -40,16 +40,16 @@ runs:
         run : |
           terraform init \
             -backend-config=${{ inputs.environment-config-file }} \
-            ${{ terraform-root }}
+            ${{ inputs.terraform-root }}
       
       - name: Terraform Validate
         shell: bash
-        run: terraform validate ${{ terraform-root }}
+        run: terraform validate ${{ inputs.terraform-root }}
       
       - name: Terraform Plan
         shell: bash
-        run: terraform plan -out=tfplan-${{ inputs.environment }} ${{ terraform-root }}
+        run: terraform plan -out=tfplan-${{ inputs.environment }} ${{ inputs.terraform-root }}
       
       - name: Show Plan Summary
         shell: bash
-        run: terraform show -no-color tfplan-${{ inputs.environment }} ${{ terraform-root }}
+        run: terraform show -no-color tfplan-${{ inputs.environment }} ${{ inputs.terraform-root }}
