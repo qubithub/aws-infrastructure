@@ -34,7 +34,7 @@ jobs:
       - name: Terraform Init
         run : |
           terraform init \
-            -backend-config="envs/${{ vars.Environment }}.config"
+            -backend-config="envs/${{ vars.ENVIRONMENT }}.config"
       
       - name: Terraform Validate
         run: terraform Validate
