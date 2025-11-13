@@ -37,7 +37,7 @@ jobs:
             -backend-config="envs/${{ vars.ENVIRONMENT }}.config"
       
       - name: Terraform Validate
-        run: terraform Validate
+        run: terraform validate
       
       - name: Terraform Plan
         run: terraform plan -out=tfplan
