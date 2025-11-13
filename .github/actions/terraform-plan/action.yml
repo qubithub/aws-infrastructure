@@ -11,13 +11,14 @@ inputs:
   aws-account:
     description: "Account number for target environment"
     required: true
+  environment-config-file: 
+    description: "Location of config file describing tf backend"
+    required: true
+
 
 runs: 
   using: "composite"
   steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
@@ -33,7 +34,7 @@ runs:
         shell: bash
         run : |
           terraform init \
-            -backend-config="envs/${{ inputs.environment }}.config"
+            -backend-config=${{ inputs.environment-config-file }}
       
       - name: Terraform Validate
         shell: bash

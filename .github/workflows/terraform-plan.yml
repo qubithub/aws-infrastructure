@@ -22,12 +22,16 @@ jobs:
       run: 
         working-directory: infra
     steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run Terraform Plan (Staging)
         uses: ./.github/actions/terraform-plan
         with: 
           environment: staging
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
+          environment-config-file: ./envs/staging.config
   
   plan-production: 
     name: Terraform Plan Production
@@ -37,9 +41,13 @@ jobs:
       run: 
         working-directory: infra
     steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
       - name: Run Terraform Plan (Production)
         uses: ./.github/actions/terraform-plan
         with: 
           environment: staging
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
+          environment-config-file: ./envs/production.config
