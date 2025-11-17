@@ -14,6 +14,9 @@ inputs:
   environment-config-file: 
     description: "Location of config file describing tf backend relative to terraform root"
     required: true
+  variable-file: 
+    description: "Location of variables for the environment"
+    required: true
   terraform-root: 
     description: "Directory containing the terraform configuration files"
     required: true
@@ -50,7 +53,12 @@ runs:
       
       - name: Terraform Plan
         shell: bash
-        run: terraform -chdir=${{ inputs.terraform-root }} plan -out=tfplan-${{ inputs.environment }} 
+        run: |
+          terraform \
+          -chdir=${{ inputs.terraform-root }} \
+          plan \
+          -out=tfplan-${{ inputs.environment }} \
+          -var-file=${{ inputs.variable-file }} \
       
       - name: Show Plan Summary
         shell: bash
