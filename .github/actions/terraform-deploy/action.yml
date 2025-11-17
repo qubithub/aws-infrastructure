@@ -44,13 +44,13 @@ runs:
             -backend-config=${{ inputs.environment-config-file }} \
             -input=false \
       
-      - name: Terraform Plan
-        shell: bash
-        run: |
-          terraform \
-          -chdir=${{ inputs.terraform-root }} \
-          plan -out=tfplan-${{ inputs.environment }} \
-          -input=false \
+      # - name: Terraform Plan
+      #   shell: bash
+      #   run: |
+      #     terraform \
+      #     -chdir=${{ inputs.terraform-root }} \
+      #     plan -out=tfplan-${{ inputs.environment }} \
+      #     -input=false \
       
       - name: Where are the files?
         shell: bash
@@ -65,4 +65,3 @@ runs:
             -auto-approve \
             -input=false \
             -no-color \
-            ./infra/tfplan-${{ inputs.environment }} \
