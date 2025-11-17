@@ -14,6 +14,9 @@ inputs:
   environment-config-file: 
     description: "Location of config file describing tf backend relative to terraform root"
     required: true
+  variable-file: 
+    description: "Location of variables for the environment"
+    required: true
   terraform-root: 
     description: "Directory containing the terraform configuration files"
     required: true
@@ -42,10 +45,15 @@ runs:
             -chdir=${{ inputs.terraform-root }} \
             init \
             -backend-config=${{ inputs.environment-config-file }} \
-            
+            -input=false \
+
       - name: Terraform Deploy
         shell: bash
         run: |
           terraform \
             -chdir=${{ inputs.terraform-root }} \
-            deploy
+            apply \
+            -auto-approve \
+            -input=false \
+            -no-color \
+            -var-file ${{ inputs.variable-file }} \

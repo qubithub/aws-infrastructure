@@ -4,7 +4,6 @@ on:
   push: 
     branches: 
       - main
-  workflow_dispatch:
   
 permissions:
   contents: read
@@ -14,7 +13,7 @@ permissions:
 jobs: 
 
   plan-and-deploy-staging: 
-    name: Terraform Plan Staging
+    name: Terraform Deploy Staging
     runs-on: ubuntu-latest
     environment: staging
     defaults: 
@@ -23,15 +22,6 @@ jobs:
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Run Terraform Plan (Staging)
-        uses: ./.github/actions/terraform-plan
-        with: 
-          environment: staging
-          aws-region: mx-central-1
-          aws-account: ${{ vars.AWS_ACCOUNT }}
-          environment-config-file: ./envs/staging.config
-          terraform-root: ./infra
       
       - name: Terraform Deploy (Staging)
         uses: ./.github/actions/terraform-deploy
@@ -40,27 +30,20 @@ jobs:
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
           environment-config-file: ./envs/staging.config
+          variable-file: ./vars/staging.tfvars
           terraform-root: ./infra
   
   plan-and-deploy-prod: 
-    name: Terraform Plan Production
+    name: Terraform Deploy Production
     runs-on: ubuntu-latest
     environment: production
+    needs: plan-and-deploy-staging
     defaults: 
       run: 
         working-directory: infra
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Run Terraform Plan (Production)
-        uses: ./.github/actions/terraform-plan
-        with: 
-          environment: production
-          aws-region: mx-central-1
-          aws-account: ${{ vars.AWS_ACCOUNT }}
-          environment-config-file: ./envs/production.config
-          terraform-root: ./infra
 
       - name: Terraform Deploy (Production)
         uses: ./.github/actions/terraform-deploy
@@ -69,4 +52,5 @@ jobs:
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
           environment-config-file: ./envs/production.config
+          variable-file: ./vars/production.tfvars
           terraform-root: ./infra

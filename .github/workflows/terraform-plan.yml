@@ -32,6 +32,7 @@ jobs:
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
           environment-config-file: ./envs/staging.config
+          variable-file: ./vars/staging.tfvars
           terraform-root: ./infra
   
   initialize-and-plan-prod: 
@@ -52,4 +53,5 @@ jobs:
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
           environment-config-file: ./envs/production.config
+          variable-file: ./vars/production.tfvars
           terraform-root: ./infra
