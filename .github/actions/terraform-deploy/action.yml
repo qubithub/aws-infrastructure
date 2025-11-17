@@ -64,4 +64,4 @@ runs:
             apply \ 
             -auto-approve \
             -input=false \
-            -no-color \
+            -no-color
