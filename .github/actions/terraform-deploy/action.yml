@@ -61,7 +61,7 @@ runs:
         run: |
           terraform \
             -chdir=${{ inputs.terraform-root }} \
-            apply \ 
+            apply \
             -auto-approve \
             -input=false \
-            -no-color
+            -no-color \
