@@ -14,7 +14,7 @@ permissions:
 jobs: 
 
   plan-and-deploy-staging: 
-    name: Terraform Plan Staging
+    name: Terraform Deploy Staging
     runs-on: ubuntu-latest
     environment: staging
     defaults: 
@@ -43,9 +43,10 @@ jobs:
           terraform-root: ./infra
   
   plan-and-deploy-prod: 
-    name: Terraform Plan Production
+    name: Terraform Deploy Production
     runs-on: ubuntu-latest
     environment: production
+    needs: plan-and-deploy-staging
     defaults: 
       run: 
         working-directory: infra

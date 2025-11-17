@@ -48,4 +48,6 @@ runs:
         run: |
           terraform \
             -chdir=${{ inputs.terraform-root }} \
-            deploy
+            apply \ 
+            -auto-approve
+            -no-color
