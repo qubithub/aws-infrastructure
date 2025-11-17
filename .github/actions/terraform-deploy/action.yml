@@ -1,5 +1,5 @@
-name: "Terraform Plan"
-description: "Runs Terraform Plan against a specific AWS account."
+name: "Terraform Deploy"
+description: "Runs Terraform Deploy against a specific AWS account."
 
 inputs: 
   environment: 
