@@ -51,7 +51,11 @@ runs:
           -chdir=${{ inputs.terraform-root }} \
           plan -out=tfplan-${{ inputs.environment }} \
           -input=false \
-          
+      
+      - name: Where are the files?
+        shell: bash
+        run: ls -R
+
       - name: Terraform Deploy
         shell: bash
         run: |
