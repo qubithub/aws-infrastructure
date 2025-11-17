@@ -1,0 +1,51 @@
+name: "Terraform Deploy"
+description: "Runs Terraform Deploy against a specific AWS account."
+
+inputs: 
+  environment: 
+    description: "Target Environment"
+    required: true
+  aws-region: 
+    description: "Target AWS Regions"
+    default: "mx-central-1"
+  aws-account:
+    description: "Account number for target environment"
+    required: true
+  environment-config-file: 
+    description: "Location of config file describing tf backend relative to terraform root"
+    required: true
+  terraform-root: 
+    description: "Directory containing the terraform configuration files"
+    required: true
+
+runs: 
+  using: "composite"
+  steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/Terraform-Runner
+          aws-region: ${{ inputs.aws-region }}
+      
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with: 
+          terraform_version: 1.13.5
+
+      - name: Terraform Init
+        shell: bash
+        run : |
+          terraform \
+            -chdir=${{ inputs.terraform-root }} \
+            init \
+            -backend-config=${{ inputs.environment-config-file }} \
+            
+      - name: Terraform Deploy
+        shell: bash
+        run: |
+          terraform \
+            -chdir=${{ inputs.terraform-root }} \
+            deploy
