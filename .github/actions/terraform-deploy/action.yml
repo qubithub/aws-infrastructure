@@ -65,4 +65,4 @@ runs:
             -auto-approve \
             -input=false \
             -no-color \
-            tfplan-${{ inputs.environment }} \
+            ./infra/tfplan-${{ inputs.environment }} \
