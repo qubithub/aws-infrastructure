@@ -1,12 +1,11 @@
-name: Check Terraform
+name: Deploy Terraform
 
 on: 
-  pull_request: 
+  merge: 
     branches: 
       - main
-    types: [opened, synchronize, reopened]
   workflow_dispatch:
-
+  
 permissions:
   contents: read
   id-token: write
@@ -14,7 +13,7 @@ permissions:
 
 jobs: 
 
-  initialize-and-plan-staging: 
+  plan-and-deploy-staging: 
     name: Terraform Plan Staging
     runs-on: ubuntu-latest
     environment: staging
@@ -33,8 +32,17 @@ jobs:
           aws-account: ${{ vars.AWS_ACCOUNT }}
           environment-config-file: ./envs/staging.config
           terraform-root: ./infra
+      
+      - name: Terraform Deploy (Staging)
+        uses: ./.github/actions/terraform-deploy
+        with: 
+          environment: staging
+          aws-region: mx-central-1
+          aws-account: ${{ vars.AWS_ACCOUNT }}
+          environment-config-file: ./envs/staging.config
+          terraform-root: ./infra
   
-  initialize-and-plan-prod: 
+  plan-and-deploy-prod: 
     name: Terraform Plan Production
     runs-on: ubuntu-latest
     environment: production
@@ -49,6 +57,15 @@ jobs:
         uses: ./.github/actions/terraform-plan
         with: 
           environment: production
+          aws-region: mx-central-1
+          aws-account: ${{ vars.AWS_ACCOUNT }}
+          environment-config-file: ./envs/production.config
+          terraform-root: ./infra
+
+      - name: Terraform Deploy (Production)
+        uses: ./.github/actions/terraform-deploy
+        with: 
+          environment: staging
           aws-region: mx-central-1
           aws-account: ${{ vars.AWS_ACCOUNT }}
           environment-config-file: ./envs/production.config
