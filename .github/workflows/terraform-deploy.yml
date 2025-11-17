@@ -1,7 +1,7 @@
 name: Deploy Terraform
 
 on: 
-  merge: 
+  push: 
     branches: 
       - main
   workflow_dispatch:
