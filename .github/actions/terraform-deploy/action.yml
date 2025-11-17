@@ -42,12 +42,18 @@ runs:
             -chdir=${{ inputs.terraform-root }} \
             init \
             -backend-config=${{ inputs.environment-config-file }} \
-            
+            - name: Terraform Plan
+        shell: bash
+        run: |
+          terraform \
+          -chdir=${{ inputs.terraform-root }} \
+          plan -out=tfplan-${{ inputs.environment }} 
+
       - name: Terraform Deploy
         shell: bash
         run: |
           terraform \
             -chdir=${{ inputs.terraform-root }} \
             apply \ 
-            -auto-approve
+            -auto-approve \
             -no-color
