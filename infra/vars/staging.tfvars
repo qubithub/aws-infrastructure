@@ -1,2 +1,3 @@
 environment = "staging"
-hosted_zone = "qcomposer-staging.qubithub.org"
+hosted_zone = "qcomposerstaging.georgedill.net"
+sites_with_auth = ["http://localhost:5173", "https://qcomposerstaging.georgedill.net"]

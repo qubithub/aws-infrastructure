@@ -1,3 +1,7 @@
+locals {
+  callback_urls = [for url in var.sites_with_auth : "${url}/logincallback"]
+}
+
 resource "aws_cognito_user_pool" "users" {
   name = "qubithub-users"
 
@@ -33,8 +37,22 @@ resource "aws_cognito_user_pool" "users" {
 
 resource "aws_cognito_user_pool_domain" "user-domain" {
   domain          = "auth.${var.hosted_zone}"
-  certificate_arn = aws_acm_certificate.cert.arn
+  certificate_arn = aws_acm_certificate.composer.arn
   user_pool_id    = aws_cognito_user_pool.users.id
+}
+
+resource "aws_cognito_user_pool_client" "clients" {
+  name                                 = "client"
+  user_pool_id                         = aws_cognito_user_pool.users.id
+  callback_urls                        = local.callback_urls
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["code", "implicit"]
+  allowed_oauth_scopes                 = ["email", "openid"]
+  supported_identity_providers         = ["COGNITO"]
+}
+
+output "auth_client_id" {
+  value     = aws_cognito_user_pool_client.clients.id
 }
 
 resource "aws_route53_record" "auth-cognito_A" {

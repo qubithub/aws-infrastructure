@@ -1,11 +1,12 @@
-resource "aws_acm_certificate" "cert" {
-  domain_name       = var.hosted_zone
+resource "aws_acm_certificate" "composer" {
+  provider = aws.us_east_1
+  domain_name       = "*.${var.hosted_zone}"
   validation_method = "DNS"
 }
 
-resource "aws_route53_record" "validation" {
+resource "aws_route53_record" "composer_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.composer.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
