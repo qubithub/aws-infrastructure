@@ -7,10 +7,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = ""
-    key     = ""
-    region  = ""
-    profile = ""
+    bucket       = ""
+    key          = ""
+    region       = ""
+    profile      = ""
     use_lockfile = true
   }
 }
