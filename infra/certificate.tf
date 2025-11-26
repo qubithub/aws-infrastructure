@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "composer" {
-  provider = aws.us_east_1
+  provider          = aws.us_east_1
   domain_name       = "*.${var.hosted_zone}"
   validation_method = "DNS"
 }
