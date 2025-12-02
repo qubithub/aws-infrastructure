@@ -2,8 +2,87 @@ locals {
   callback_urls = [for url in var.sites_with_auth : "${url}/logincallback"]
 }
 
+data "archive_file" "new_users_default_students_group" {
+  type        = "zip"
+  source_file = "lambda/new_user_students_group.mjs"
+  output_path = "zip/new_user_students_group.zip"
+}
+
+resource "aws_iam_role_policy" "lambda_policy" {
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "cognito-idp:AdminAddUserToGroup",
+          "cognito-idp:AdminGetUser",
+          "cognito-idp:AdminListGroupsForUser",
+          "cognito-idp:GetUserPoolMfaConfig"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logging" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role" "lambda_role" {
+  name = "cognito-post-confirmation-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Principal = { Service = "lambda.amazonaws.com" },
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_lambda_function" "new_users_default_students_group" {
+  function_name = "new_users_default_students_group"
+
+  filename         = data.archive_file.new_users_default_students_group.output_path
+  source_code_hash = data.archive_file.new_users_default_students_group.output_base64sha256
+
+  handler = "new_user_students_group.handler"
+  runtime = "nodejs18.x"
+
+  role = aws_iam_role.lambda_role.arn
+
+  timeout = 10
+}
+
+resource "aws_lambda_permission" "allow_cognito_post_confirmation" {
+  statement_id  = "AllowExecutionFromCognito"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.new_users_default_students_group.function_name
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = aws_cognito_user_pool.users.arn
+}
+
 resource "aws_cognito_user_pool" "users" {
   name = "qubithub-users"
+
+  lambda_config {
+    post_confirmation = aws_lambda_function.new_users_default_students_group.arn
+  }
 
   username_attributes      = ["email"]
   auto_verified_attributes = ["email"]
@@ -49,6 +128,11 @@ resource "aws_cognito_user_pool_client" "clients" {
   allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_scopes                 = ["email", "openid"]
   supported_identity_providers         = ["COGNITO"]
+}
+
+resource "aws_cognito_user_pool_ui_customization" "customization" {
+  user_pool_id = aws_cognito_user_pool_domain.user-domain.user_pool_id
+  image_file   = filebase64("assets/qubithub.png")
 }
 
 output "auth_client_id" {
