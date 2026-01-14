@@ -10,8 +10,13 @@ terraform {
 
 resource "aws_acm_certificate" "certificate" {
   provider          = aws.us_east_1
-  domain_name       = "*.${var.hosted_zone}"
+  domain_name = var.hosted_zone
+  subject_alternative_names       = ["*.${var.hosted_zone}"]
   validation_method = "DNS"
+  
+  lifecycle { 
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_record" "dns_validation_record" {

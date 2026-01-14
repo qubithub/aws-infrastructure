@@ -37,24 +37,22 @@ module "certificate" {
   }
 }
 
-// This is temporary until static site hosting is set up
-
-resource "aws_route53_record" "initial_record_root" {
-  zone_id = module.dns.hosted_zone_id
-  name    = module.dns.hosted_zone
-  type    = "A"
-  ttl     = 300
-  records = ["192.0.2.1"]
-}
 
 // Static site hosting here
-
+module "designer_home" {
+    source = "./modules/static_site"
+    name = var.environment
+    bucket_name = "qubithub-designer"
+    page_url = var.designer_url
+    hosted_zone_id = module.dns.hosted_zone_id
+    acm_certificate_arn = module.certificate.certificate_arn
+}
 
 // Auth server
 
 module "auth" {
   source = "./modules/auth"
-  depends_on = [ aws_route53_record.initial_record_root ]
+  depends_on = [ module.designer_home ]
   sites_with_auth = var.sites_with_auth
   auth_domain_name = "auth.${module.dns.hosted_zone}"
   hosted_zone_certificate_arn = module.certificate.certificate_arn
@@ -63,3 +61,4 @@ module "auth" {
   custom_login_image = filebase64("assets/qubithub.png")
   hosted_zone_id = module.dns.hosted_zone_id
 }
+
