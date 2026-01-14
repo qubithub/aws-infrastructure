@@ -59,6 +59,10 @@ resource "aws_cognito_user_pool_ui_customization" "customization" {
   user_pool_id = aws_cognito_user_pool_domain.user-domain.user_pool_id
   image_file   = var.custom_login_image
   depends_on = [ aws_cognito_user_pool_domain.user-domain ]
+  lifecycle {
+    ignore_changes = [image_file]
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_record" "auth-cognito_A" {
