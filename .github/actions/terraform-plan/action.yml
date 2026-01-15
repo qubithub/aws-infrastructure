@@ -27,6 +27,11 @@ runs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Check AWS secrets presence
+        run: |
+          test -n "${{ secrets.AWS_ACCESS_KEY_ID }}" || (echo "Missing AWS_ACCESS_KEY_ID" && exit 1)
+          test -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" || (echo "Missing AWS_SECRET_ACCESS_KEY" && exit 1)
+      
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
