@@ -36,8 +36,8 @@ runs:
       - name: Check AWS secrets presence
         shell: bash
         run: |
-          test -n "${{ inputs.AWS_ACCESS_KEY_ID }}" || (echo "Missing AWS_ACCESS_KEY_ID")
-          test -n "${{ inputs.AWS_SECRET_ACCESS_KEY }}" || (echo "Missing AWS_SECRET_ACCESS_KEY")
+          test -n "${{ inputs.aws-access-key-id }}" || (echo "Missing AWS_ACCESS_KEY_ID")
+          test -n "${{ inputs.aws-secret-access-key }}" || (echo "Missing AWS_SECRET_ACCESS_KEY")
       
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
