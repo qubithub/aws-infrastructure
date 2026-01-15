@@ -30,7 +30,8 @@ runs:
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
-          role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/Terraform-Runner
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.aws-region }}
       
       - name: Set up Terraform
