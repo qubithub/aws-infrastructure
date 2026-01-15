@@ -20,6 +20,12 @@ inputs:
   terraform-root: 
     description: "Directory containing the terraform configuration files"
     required: true
+  aws-access-key-id:
+    description: "AWS Access Key Id"
+    required: true
+  aws-secret-access-key: 
+    description: "AWS Secret Access Key"
+    required: true
 
 runs: 
   using: "composite"
@@ -30,14 +36,14 @@ runs:
       - name: Check AWS secrets presence
         shell: bash
         run: |
-          test -n "${{ secrets.AWS_ACCESS_KEY_ID }}" || (echo "Missing AWS_ACCESS_KEY_ID")
-          test -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" || (echo "Missing AWS_SECRET_ACCESS_KEY")
+          test -n "${{ inputs.AWS_ACCESS_KEY_ID }}" || (echo "Missing AWS_ACCESS_KEY_ID")
+          test -n "${{ inputs.AWS_SECRET_ACCESS_KEY }}" || (echo "Missing AWS_SECRET_ACCESS_KEY")
       
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.aws-region }}
       
       - name: Set up Terraform
