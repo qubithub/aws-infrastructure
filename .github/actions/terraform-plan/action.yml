@@ -32,13 +32,16 @@ runs:
   steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+        
       - name: Check AWS secrets presence
         shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         run: |
-          test -n "${{ inputs.aws-access-key-id }}" || (echo "Missing AWS_ACCESS_KEY_ID")
-          test -n "${{ inputs.aws-secret-access-key }}" || (echo "Missing AWS_SECRET_ACCESS_KEY")
-      
+          test -n "${AWS_ACCESS_KEY_ID}" || (echo "Missing AWS_ACCESS_KEY_ID" && exit 1)
+          test -n "${AWS_SECRET_ACCESS_KEY}" || (echo "Missing AWS_SECRET_ACCESS_KEY" && exit 1)
+          
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@v4
         with: 
