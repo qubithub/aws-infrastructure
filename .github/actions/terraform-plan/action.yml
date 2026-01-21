@@ -21,6 +21,10 @@ runs:
   steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Verify Keys
+        shell: bash
+        run: aws sts get-caller-identity --debug 
         
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
