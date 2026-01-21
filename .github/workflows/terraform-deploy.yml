@@ -11,11 +11,11 @@ permissions:
   pull-requests: write
 
 jobs: 
-
-  plan-and-deploy-staging: 
-    name: Terraform Deploy Staging
+  
+  deploy-prod: 
+    name: Terraform Deploy Production
     runs-on: ubuntu-latest
-    environment: staging
+    environment: production
     defaults: 
       run: 
         working-directory: infra
@@ -23,34 +23,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Terraform Deploy (Staging)
-        uses: ./.github/actions/terraform-deploy
-        with: 
-          environment: staging
-          aws-region: mx-central-1
-          aws-account: ${{ vars.AWS_ACCOUNT }}
-          environment-config-file: ./envs/staging.config
-          variable-file: ./vars/staging.tfvars
-          terraform-root: ./infra
-  
-  plan-and-deploy-prod: 
-    name: Terraform Deploy Production
-    runs-on: ubuntu-latest
-    environment: production
-    needs: plan-and-deploy-staging
-    defaults: 
-      run: 
-        working-directory: infra
-    steps: 
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: mx-central-1    
 
       - name: Terraform Deploy (Production)
         uses: ./.github/actions/terraform-deploy
         with: 
-          environment: staging
-          aws-region: mx-central-1
-          aws-account: ${{ vars.AWS_ACCOUNT }}
+          environment: production
           environment-config-file: ./envs/production.config
           variable-file: ./vars/production.tfvars
           terraform-root: ./infra
