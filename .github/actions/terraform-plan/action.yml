@@ -5,12 +5,6 @@ inputs:
   environment: 
     description: "Target Environment"
     required: true
-  aws-region: 
-    description: "Target AWS Regions"
-    default: "mx-central-1"
-  aws-account:
-    description: "Account number for target environment"
-    required: true
   environment-config-file: 
     description: "Location of config file describing tf backend relative to terraform root"
     required: true
@@ -20,35 +14,14 @@ inputs:
   terraform-root: 
     description: "Directory containing the terraform configuration files"
     required: true
-  aws-access-key-id:
-    description: "AWS Access Key Id"
-    required: true
-  aws-secret-access-key: 
-    description: "AWS Secret Access Key"
-    required: true
+
 
 runs: 
   using: "composite"
   steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
-      - name: Check AWS secrets presence
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
-          AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
-        run: |
-          test -n "${AWS_ACCESS_KEY_ID}" || (echo "Missing AWS_ACCESS_KEY_ID" && exit 1)
-          test -n "${AWS_SECRET_ACCESS_KEY}" || (echo "Missing AWS_SECRET_ACCESS_KEY" && exit 1)
-          
-      - name: Login to AWS
-        uses: aws-actions/configure-aws-credentials@v4
-        with: 
-          aws-access-key-id: ${{ inputs.aws-access-key-id }}
-          aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-          aws-region: ${{ inputs.aws-region }}
-      
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with: 
